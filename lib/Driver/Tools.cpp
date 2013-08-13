@@ -2932,6 +2932,12 @@ void Clang::ConstructJob(Compilation &C, const JobAction &JA,
     CmdArgs.push_back(Args.MakeArgString(Twine(StackProtectorLevel)));
   }
 
+  // Handle the memory safety options
+
+  if (Args.getLastArg(options::OPT_softbound)){
+    CmdArgs.push_back("-fsoftbound");
+  }
+
   // --param ssp-buffer-size=
   for (arg_iterator it = Args.filtered_begin(options::OPT__param),
        ie = Args.filtered_end(); it != ie; ++it) {
@@ -4887,6 +4893,21 @@ void darwin::Link::ConstructJob(Compilation &C, const JobAction &JA,
   Args.AddAllArgs(CmdArgs, options::OPT_T_Group);
   Args.AddAllArgs(CmdArgs, options::OPT_F);
 
+  //
+  // Add in any memory safety libraries.  Even if we're not compiling C++ code,
+  // we need to link in the C++ standard libraries.
+  //
+
+  if (Args.hasArg(options::OPT_softbound)){
+    CmdArgs.push_back("-lsoftbound_rt");
+    CmdArgs.push_back("-lm");
+    if (!Args.hasArg(options::OPT_nostdlib) &&
+        !Args.hasArg(options::OPT_nodefaultlibs)) {
+      getToolChain().AddCXXStdlibLibArgs(Args, CmdArgs);
+    }
+  }
+
+
   const char *Exec =
     Args.MakeArgString(getToolChain().GetProgramPath("ld"));
   C.addCommand(new Command(JA, *this, Exec, CmdArgs));
@@ -5175,6 +5196,18 @@ void auroraux::Link::ConstructJob(Compilation &C, const JobAction &JA,
 
   AddLinkerInputs(getToolChain(), Inputs, Args, CmdArgs);
 
+  //
+  // Add in any memory safety libraries.
+  //
+
+  if (Args.hasArg(options::OPT_softbound)){
+    CmdArgs.push_back("-lsoftbound_rt");
+    CmdArgs.push_back("-lstdc++");
+    CmdArgs.push_back("-lrt");
+    CmdArgs.push_back("-lm");
+  }
+
+
   if (!Args.hasArg(options::OPT_nostdlib) &&
       !Args.hasArg(options::OPT_nodefaultlibs)) {
     // FIXME: For some reason GCC passes -lgcc before adding
@@ -5305,6 +5338,16 @@ void openbsd::Link::ConstructJob(Compilation &C, const JobAction &JA,
   Args.AddAllArgs(CmdArgs, options::OPT_r);
 
   AddLinkerInputs(getToolChain(), Inputs, Args, CmdArgs);
+
+  //
+  // Add in any memory safety libraries.
+  //
+  if (Args.hasArg(options::OPT_softbound)){
+    CmdArgs.push_back("-lsoftbound_rt");
+    CmdArgs.push_back("-lrt");
+    CmdArgs.push_back("-lm");
+    CmdArgs.push_back("-lstdc++");
+  }
 
   if (!Args.hasArg(options::OPT_nostdlib) &&
       !Args.hasArg(options::OPT_nodefaultlibs)) {
@@ -5676,6 +5719,16 @@ void freebsd::Link::ConstructJob(Compilation &C, const JobAction &JA,
 
   AddLinkerInputs(ToolChain, Inputs, Args, CmdArgs);
 
+ //
+ // Add in any memory safety libraries.
+ //
+ if (Args.hasArg(options::OPT_softbound)){
+    CmdArgs.push_back("-lsoftbound_rt");
+    CmdArgs.push_back("-lstdc++");
+    CmdArgs.push_back("-lrt");
+    CmdArgs.push_back("-lm");
+  }
+
   if (!Args.hasArg(options::OPT_nostdlib) &&
       !Args.hasArg(options::OPT_nodefaultlibs)) {
     if (D.CCCIsCXX()) {
@@ -5845,6 +5898,16 @@ void netbsd::Link::ConstructJob(Compilation &C, const JobAction &JA,
   Args.AddAllArgs(CmdArgs, options::OPT_r);
 
   AddLinkerInputs(getToolChain(), Inputs, Args, CmdArgs);
+
+  //
+  // Add in any memory safety libraries.
+  //
+  if (Args.hasArg(options::OPT_softbound)){
+    CmdArgs.push_back("-lsoftbound_rt");
+    CmdArgs.push_back("-lstdc++");
+    CmdArgs.push_back("-lrt");
+    CmdArgs.push_back("-lm");
+  }
 
   if (!Args.hasArg(options::OPT_nostdlib) &&
       !Args.hasArg(options::OPT_nodefaultlibs)) {
@@ -6262,6 +6325,17 @@ void gnutools::Link::ConstructJob(Compilation &C, const JobAction &JA,
   // The profile runtime also needs access to system libraries.
   addProfileRTLinux(getToolChain(), Args, CmdArgs);
 
+  // Add in any memory safety libraries.
+  //
+  if (Args.hasArg(options::OPT_softbound)){
+    CmdArgs.push_back("-lsoftbound_rt");
+    CmdArgs.push_back("-lrt");
+    CmdArgs.push_back("-lm");
+    CmdArgs.push_back("-lstdc++");
+  }
+
+
+
   if (D.CCCIsCXX() &&
       !Args.hasArg(options::OPT_nostdlib) &&
       !Args.hasArg(options::OPT_nodefaultlibs)) {
@@ -6373,6 +6447,16 @@ void minix::Link::ConstructJob(Compilation &C, const JobAction &JA,
   Args.AddAllArgs(CmdArgs, options::OPT_e);
 
   AddLinkerInputs(getToolChain(), Inputs, Args, CmdArgs);
+
+  //
+  // Add in any memory safety libraries.
+  //
+  if (Args.hasArg(options::OPT_softbound)){
+    CmdArgs.push_back("-lsoftbound_rt");
+    CmdArgs.push_back("-lrt");
+    CmdArgs.push_back("-lm");
+    CmdArgs.push_back("-lstdc++");
+  }
 
   addProfileRT(getToolChain(), Args, CmdArgs, getToolChain().getTriple());
 
@@ -6506,6 +6590,16 @@ void dragonfly::Link::ConstructJob(Compilation &C, const JobAction &JA,
   Args.AddAllArgs(CmdArgs, options::OPT_e);
 
   AddLinkerInputs(getToolChain(), Inputs, Args, CmdArgs);
+
+  //
+  // Add in any memory safety libraries.
+  //
+  if (Args.hasArg(options::OPT_softbound)){
+    CmdArgs.push_back("-lsoftbound_rt");
+    CmdArgs.push_back("-lrt");
+    CmdArgs.push_back("-lm");
+    CmdArgs.push_back("-lstdc++");
+  }
 
   if (!Args.hasArg(options::OPT_nostdlib) &&
       !Args.hasArg(options::OPT_nodefaultlibs)) {
