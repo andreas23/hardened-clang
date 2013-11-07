@@ -238,7 +238,7 @@ void CompilerInstance::createPreprocessor() {
   if (PPOpts.DetailedRecord)
     PP->createPreprocessingRecord();
 
-  InitializePreprocessor(*PP, PPOpts, getHeaderSearchOpts(), getFrontendOpts());
+  InitializePreprocessor(*PP, getCodeGenOpts(), PPOpts, getHeaderSearchOpts(), getFrontendOpts());
 
   PP->setPreprocessedOutput(getPreprocessorOutputOpts().ShowCPP);
 

@@ -19,6 +19,7 @@
 #include "clang/Basic/Version.h"
 #include "clang/Frontend/FrontendDiagnostic.h"
 #include "clang/Frontend/FrontendOptions.h"
+#include "clang/Frontend/CodeGenOptions.h"
 #include "clang/Lex/HeaderSearch.h"
 #include "clang/Lex/Preprocessor.h"
 #include "clang/Lex/PreprocessorOptions.h"
@@ -752,6 +753,7 @@ static void InitializeFileRemapping(DiagnosticsEngine &Diags,
 /// environment ready to process a single file. This returns true on error.
 ///
 void clang::InitializePreprocessor(Preprocessor &PP,
+				   const CodeGenOptions &CodeGenOpts,
                                    const PreprocessorOptions &InitOpts,
                                    const HeaderSearchOptions &HSOpts,
                                    const FrontendOptions &FEOpts) {
@@ -825,6 +827,10 @@ void clang::InitializePreprocessor(Preprocessor &PP,
   for (unsigned i = 0, e = InitOpts.Includes.size(); i != e; ++i) {
     const std::string &Path = InitOpts.Includes[i];
     AddImplicitInclude(Builder, Path, PP.getFileManager());
+  }
+
+  if (CodeGenOpts.SoftBound) {
+    AddImplicitInclude(Builder, "_softbounds.h", PP.getFileManager());
   }
 
   // Exit the command line and go back to <built-in> (2 is LC_LEAVE).
