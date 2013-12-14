@@ -3093,6 +3093,16 @@ void Clang::ConstructJob(Compilation &C, const JobAction &JA,
     CmdArgs.push_back(Args.MakeArgString(Twine(StackProtectorLevel)));
   }
 
+
+  if (Args.getLastArg(options::OPT_fsoftboundcets)){
+    CmdArgs.push_back("-fsoftboundcets");
+  }
+
+  if (Args.getLastArg(options::OPT_fsoftboundcetsstore)) {
+    CmdArgs.push_back("-fsoftboundcetsstore");
+  }
+
+
   // --param ssp-buffer-size=
   for (arg_iterator it = Args.filtered_begin(options::OPT__param),
        ie = Args.filtered_end(); it != ie; ++it) {
@@ -5541,6 +5551,11 @@ void openbsd::Link::ConstructJob(Compilation &C, const JobAction &JA,
 
   AddLinkerInputs(getToolChain(), Inputs, Args, CmdArgs);
 
+  if (Args.hasArg(options::OPT_fsoftboundcets)){
+    CmdArgs.push_back("-lsoftboundcets_rt");
+  }
+
+  
   if (!Args.hasArg(options::OPT_nostdlib) &&
       !Args.hasArg(options::OPT_nodefaultlibs)) {
     if (D.CCCIsCXX()) {
@@ -5928,6 +5943,10 @@ void freebsd::Link::ConstructJob(Compilation &C, const JobAction &JA,
   }
 
   AddLinkerInputs(ToolChain, Inputs, Args, CmdArgs);
+
+  if (Args.hasArg(options::OPT_fsoftboundcets)){
+    CmdArgs.push_back("-lsoftboundcets_rt");
+  }
 
   if (!Args.hasArg(options::OPT_nostdlib) &&
       !Args.hasArg(options::OPT_nodefaultlibs)) {
@@ -6555,6 +6574,11 @@ void gnutools::Link::ConstructJob(Compilation &C, const JobAction &JA,
     CmdArgs.push_back("--no-demangle");
 
   AddLinkerInputs(ToolChain, Inputs, Args, CmdArgs);
+
+  if (Args.hasArg(options::OPT_fsoftboundcets)){
+    CmdArgs.push_back("-lsoftboundcets_rt");
+  }
+
 
   // Call these before we add the C++ ABI library.
   if (Sanitize.needsUbsanRt())

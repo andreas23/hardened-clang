@@ -434,6 +434,7 @@ static bool ParseCodeGenArgs(CodeGenOptions &Opts, ArgList &Args, InputKind IK,
     }
   }
 
+
   Opts.InstrumentFunctions = Args.hasArg(OPT_finstrument_functions);
   Opts.InstrumentForProfiling = Args.hasArg(OPT_pg);
   Opts.EmitOpenCLArgMetadata = Args.hasArg(OPT_cl_kernel_arg_info);
@@ -446,6 +447,10 @@ static bool ParseCodeGenArgs(CodeGenOptions &Opts, ArgList &Args, InputKind IK,
     Args.hasArg(OPT_fsanitize_address_zero_base_shadow);
   Opts.SanitizeUndefinedTrapOnError =
     Args.hasArg(OPT_fsanitize_undefined_trap_on_error);
+
+  Opts.SoftBoundCETS = Args.hasArg(OPT_fsoftboundcets);
+  Opts.SoftBoundCETSStore = Args.hasArg(OPT_fsoftboundcetsstore);
+
   Opts.SSPBufferSize =
       getLastArgIntValue(Args, OPT_stack_protector_buffer_size, 8, Diags);
   Opts.StackRealignment = Args.hasArg(OPT_mstackrealign);

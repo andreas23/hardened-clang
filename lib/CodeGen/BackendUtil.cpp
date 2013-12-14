@@ -36,6 +36,11 @@
 #include "llvm/Transforms/Instrumentation.h"
 #include "llvm/Transforms/ObjCARC.h"
 #include "llvm/Transforms/Scalar.h"
+
+#include "llvm/Transforms/SoftBoundCETS/InitializeSoftBoundCETS.h"
+#include "llvm/Transforms/SoftBoundCETS/SoftBoundCETSPass.h"
+#include "llvm/Transforms/SoftBoundCETS/FixByValAttributes.h"
+
 using namespace clang;
 using namespace llvm;
 
@@ -350,6 +355,22 @@ void EmitAssemblyHelper::CreatePasses(TargetMachine *TM) {
   }
 
   PMBuilder.populateModulePassManager(*MPM);
+
+  if(CodeGenOpts.SoftBoundCETS){
+    MPM->add(new DominatorTree());
+    MPM->add(new LoopInfo());
+    //    MPM->add(new ScalarEvolution());
+    MPM->add(new FixByValAttributesPass());
+    MPM->add(new InitializeSoftBoundCETS());
+    MPM->add(new SoftBoundCETSPass());    
+  }
+
+  if(CodeGenOpts.SoftBoundCETSStore){
+
+
+  }
+  PMBuilder.populateModulePassManager(*MPM);
+
 }
 
 TargetMachine *EmitAssemblyHelper::CreateTargetMachine(bool MustCreateTM) {

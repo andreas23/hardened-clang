@@ -152,6 +152,9 @@ ENUM_CODEGENOPT(DefaultTLSModel, TLSModel, 2, GeneralDynamicTLSModel)
 CODEGENOPT(SanitizeRecover, 1, 1) ///< Attempt to recover from sanitizer checks
                                   ///< by continuing execution when possible
 
+CODEGENOPT(SoftBoundCETS  , 1, 0) /// < SoftBoundCETS pointer-based checking
+CODEGENOPT(SoftBoundCETSStore, 1, 0) ///< SoftBoundCETS pointer-based store-only checking
+
 #undef CODEGENOPT
 #undef ENUM_CODEGENOPT
 #undef VALUE_CODEGENOPT

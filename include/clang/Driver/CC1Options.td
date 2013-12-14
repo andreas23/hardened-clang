@@ -555,4 +555,11 @@ def cl_std_EQ : Joined<["-"], "cl-std=">,
 def fcuda_is_device : Flag<["-"], "fcuda-is-device">,
   HelpText<"Generate code for CUDA device">;
 
+//===----------------------------------------------------------------------===//
+// SoftBoundCETS Options
+//===----------------------------------------------------------------------===//
+
+def fsoftboundcetsstore : Flag<["-"], "fsoftboundcetsstore">,
+  HelpText<"SoftBoundCETS Pointer Checker  store-only instrumentation">;
+
 } // let Flags = [CC1Option]

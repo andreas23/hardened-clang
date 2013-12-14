@@ -534,6 +534,8 @@ def fgnu_keywords : Flag<["-"], "fgnu-keywords">, Group<f_Group>, Flags<[CC1Opti
   HelpText<"Allow GNU-extension keywords regardless of language standard">;
 def fgnu89_inline : Flag<["-"], "fgnu89-inline">, Group<f_Group>, Flags<[CC1Option]>,
   HelpText<"Use the gnu89 inline semantics">;
+def fsoftboundcets : Flag<["-"], "fsoftboundcets">, Group<f_Group>, Flags<[CC1Option]>,
+  HelpText<"SoftBoundCETS Memory Checker">;
 def fno_gnu89_inline : Flag<["-"], "fno-gnu89-inline">, Group<f_Group>;
 def fgnu_runtime : Flag<["-"], "fgnu-runtime">, Group<f_Group>,
   HelpText<"Generate output compatible with the standard GNU Objective-C runtime">;
